@@ -4,12 +4,14 @@ import org.msvc.product_managment.clients.ProductFeignClient;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.service.ProductManagmentService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Service
 public class ProductManagmentServiceImpl implements ProductManagmentService {
 
     private final ProductFeignClient productFeignClient;

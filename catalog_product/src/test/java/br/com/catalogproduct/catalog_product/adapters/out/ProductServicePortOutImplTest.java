@@ -51,7 +51,6 @@ public class ProductServicePortOutImplTest {
     @Test
     public void updateProduct_WithValidData_ReturnsProduct(){
         when(mapper.map(PRODUCT_REQUEST, Product.class)).thenReturn(PRODUCT);
-        when(repository.existsById(2L)).thenReturn(true);
         when(repository.findById(2L)).thenReturn(Optional.of(PRODUCT));
         when(repository.save(any(Product.class))).thenReturn(PRODUCT);
         when(mapper.map(PRODUCT, ProductResponse.class)).thenReturn(PRODUCT_RESPONSE);
@@ -62,8 +61,6 @@ public class ProductServicePortOutImplTest {
         assertTrue(updatedProduct.isPresent());
         assertEquals(PRODUCT_RESPONSE, updatedProduct.get());
 
-
-        verify(repository, times(1)).existsById(2L);
         verify(repository, times(1)).findById(2L);
         verify(repository, times(1)).save(any(Product.class));
     }
