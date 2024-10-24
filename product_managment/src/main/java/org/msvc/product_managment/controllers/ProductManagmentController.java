@@ -1,6 +1,7 @@
 package org.msvc.product_managment.controllers;
 
 import org.msvc.product_managment.model.ProductManagment;
+import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,12 @@ public class ProductManagmentController {
     }
 
     @GetMapping
-    public List<ProductManagment> listAllProducts() {
+    public List<ProductManagmentResponse> listAllProducts() {
         return productManagmentService.getAllProductsManagment();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductManagment> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductManagmentResponse> getProductById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(productManagmentService.getProductManagmentById(id).get());
     }
 }

@@ -1,14 +1,13 @@
-package org.msvc.product_managment.model;
+package org.msvc.product_managment.model.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Product {
-
+@NoArgsConstructor
+public class ProductResponse {
     private String name;
 
     private String description;
