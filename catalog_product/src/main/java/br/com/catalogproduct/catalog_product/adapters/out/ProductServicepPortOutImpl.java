@@ -37,9 +37,9 @@ public class ProductServicepPortOutImpl implements ApiProductsPortOut {
                 .orElseThrow(() -> new ProductNotFoundException(productId)));
 
         Product product = productOp.get();
-        product.setName(productRequest.name());
-        product.setDescription(productRequest.description());
-        product.setPrice(productRequest.price());
+        product.setName(productRequest.getName());
+        product.setDescription(productRequest.getDescription());
+        product.setPrice(productRequest.getPrice());
         Product savedProduct = productRepository.save(product);
 
         return Optional.of(modelMapper.map(savedProduct, ProductResponse.class));

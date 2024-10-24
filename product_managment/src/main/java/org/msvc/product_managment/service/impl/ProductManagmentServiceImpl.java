@@ -1,6 +1,8 @@
 package org.msvc.product_managment.service.impl;
 
+import feign.FeignException;
 import org.msvc.product_managment.clients.ProductFeignClient;
+import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.service.ProductManagmentService;
@@ -30,7 +32,11 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
 
     @Override
     public Optional<ProductManagment> getProductManagmentById(Long id) {
-        Product product = productFeignClient.findById(id);
-        return Optional.of(new ProductManagment(product, new Random().nextInt(10) + 1));
+        try {
+            Product product = productFeignClient.findById(id);
+            return Optional.of(new ProductManagment(product, new Random().nextInt(10) + 1));
+        } catch (FeignException.NotFound e) {
+            throw new ProductNotFoundException(id);
+        }
     }
 }

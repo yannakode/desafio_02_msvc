@@ -9,7 +9,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public record ProductRequest (@NotBlank(message = "Name field must not be empty") String name,
-                              @NotBlank(message = "Description field must not be empty") String description,
-                              @Min(value = 1, message = "Price field must be at least 1") double price){
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductRequest {
+
+    @NotBlank(message = "Name field must not be empty")
+    private String name;
+
+    @NotBlank(message = "Description field must not be empty")
+    private String description;
+
+    @Min(value = 1, message = "Price field must be at least 1")
+    private double price;
 }
