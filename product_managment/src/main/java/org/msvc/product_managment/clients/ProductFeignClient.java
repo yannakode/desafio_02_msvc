@@ -22,4 +22,7 @@ public interface ProductFeignClient {
 
     @PutMapping("/{id}")
     ProductResponse update(@RequestBody ProductRequest productRequest, @PathVariable Long id);
+
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable Long id);
 }

@@ -1,4 +1,4 @@
-package org.msvc.product_managment.service.impl;
+package org.msvc.product_managment.service.Impl;
 
 import feign.FeignException;
 import org.modelmapper.ModelMapper;
@@ -55,6 +55,8 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
 
     @Override
     public ProductManagmentResponse createProductManagment(ProductManagmentRequest productManagmentRequest) {
+        if(productManagmentRequest.getProduct() == null) throw new ProductNotFoundException("Product cannot be null");
+
         ProductRequest productRequest = modelMapper.map(productManagmentRequest.getProduct(), ProductRequest.class);
         try{
             productFeignClient.save(productRequest);
@@ -67,8 +69,10 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
 
     @Override
     public ProductManagmentResponse updateProductManagment(ProductManagmentRequest productManagmentRequest, Long productId) {
-        ProductRequest productRequest = modelMapper.map(productManagmentRequest.getProduct(), ProductRequest.class);
+        if(productManagmentRequest.getProduct() == null) throw new ProductNotFoundException("Product cannot be null");
+
         try{
+            ProductRequest productRequest = modelMapper.map(productManagmentRequest.getProduct(), ProductRequest.class);
             ProductResponse productResponse = productFeignClient.update(productRequest, productId);
             Product productUpated = modelMapper.map(productResponse, Product.class);
 
@@ -77,10 +81,8 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
             productManagmentRequestUpdated.setQuantity(productManagmentRequest.getQuantity());
 
             return modelMapper.map(productManagmentRequestUpdated, ProductManagmentResponse.class);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (FeignException.BadRequest e) {
+            throw new CustomBadRequestException(e);
         }
     }
-
-
 }

@@ -7,6 +7,7 @@ import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,8 +21,8 @@ public class ProductManagmentController {
     }
 
     @GetMapping
-    public List<ProductManagmentResponse> listAllProducts() {
-        return productManagmentService.getAllProductsManagment();
+    public ResponseEntity<List<ProductManagmentResponse>> listAllProducts() {
+        return ResponseEntity.status(HttpStatus.OK).body(productManagmentService.getAllProductsManagment());
     }
 
     @GetMapping("/{id}")
