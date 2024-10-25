@@ -15,4 +15,8 @@ public interface ProductManagmentService {
     ProductManagmentResponse createProductManagment(ProductManagmentRequest productManagmentRequest);
 
     ProductManagmentResponse updateProductManagment(ProductManagmentRequest productManagmentRequest, Long id);
+
+    void deleteProduct(Long id);
+
+    List<ProductManagmentResponse> filterProductByPrice(Integer min, Integer max);
 }

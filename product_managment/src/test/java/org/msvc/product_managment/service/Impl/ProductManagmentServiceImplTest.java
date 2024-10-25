@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.msvc.product_managment.commons.ProductConstraits.*;
-import static org.msvc.product_managment.commons.ProductManagmentConstraits.PRODUCT_MANAGMENT_REQUEST;
-import static org.msvc.product_managment.commons.ProductManagmentConstraits.PRODUCT_MANAGMENT_RESPONSE;
+import static org.msvc.product_managment.commons.ProductManagmentConstraits.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductManagmentServiceImplTest {
@@ -86,14 +85,9 @@ public class ProductManagmentServiceImplTest {
     }
 
     @Test
-    public void createProduct_WithInvalidData_ThrowsException(){
-        when(modelMapper.map(any(Product.class), eq(ProductRequest.class))).thenReturn(PRODUCT_REQUEST);
-        when(productFeignClient.save(PRODUCT_REQUEST)).thenThrow(CustomBadRequestException.class);
-        when(modelMapper.map(any(ProductManagmentRequest.class), eq(ProductManagmentResponse.class)));
-
-        assertThatThrownBy(()-> productManagmentService.createProductManagment(PRODUCT_MANAGMENT_REQUEST)).isInstanceOf(CustomBadRequestException.class);
-
-        verify(productFeignClient, times(1)).save(PRODUCT_REQUEST);
+    public void createProductManagment_WithNullProduct_ThrowsException(){
+        assertThatThrownBy(()-> productManagmentService.createProductManagment(PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT))
+                .isInstanceOf(ProductNotFoundException.class);
     }
 
     @Test
@@ -111,10 +105,8 @@ public class ProductManagmentServiceImplTest {
     }
 
     @Test
-    public void updateProduct_WithInvalidData_ThrowsException(){
-        when(modelMapper.map(any(Product.class), eq(ProductRequest.class))).thenReturn(PRODUCT_REQUEST);
-        when(productFeignClient.update(PRODUCT_REQUEST, 1L)).thenThrow(RuntimeException.class);
-
-        assertThatThrownBy(()-> productManagmentService.updateProductManagment(PRODUCT_MANAGMENT_REQUEST, 1L)).isInstanceOf(RuntimeException.class);
+    public void updateProductManagment_WithNullProduct_ThrowsException(){
+        assertThatThrownBy(()-> productManagmentService.updateProductManagment(PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT, 1L))
+                .isInstanceOf(ProductNotFoundException.class);
     }
 }

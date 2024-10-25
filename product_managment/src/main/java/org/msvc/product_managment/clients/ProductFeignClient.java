@@ -25,4 +25,7 @@ public interface ProductFeignClient {
 
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id);
+
+    @GetMapping("/search")
+    List<Product> filterByPrice(@RequestParam(required = false) Integer min, @RequestParam(required = false) Integer max);
 }

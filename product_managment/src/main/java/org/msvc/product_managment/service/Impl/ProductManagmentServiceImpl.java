@@ -85,4 +85,22 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
             throw new CustomBadRequestException(e);
         }
     }
+
+    @Override
+    public void deleteProduct(Long id){
+        try{
+            productFeignClient.delete(id);
+        }catch (FeignException.NotFound e){
+            throw new CustomBadRequestException("Product not found with id " + id);
+        }
+    }
+
+    @Override
+    public List<ProductManagmentResponse> filterProductByPrice(Integer min, Integer max){
+        return productFeignClient.filterByPrice(min, max)
+                .stream()
+                .map(p -> new ProductManagment(p, new Random().nextInt(10) + 1))
+                .map(p-> modelMapper.map(p, ProductManagmentResponse.class))
+                .collect(Collectors.toList());
+    }
 }
