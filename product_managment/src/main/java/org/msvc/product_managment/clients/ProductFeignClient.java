@@ -1,9 +1,10 @@
 package org.msvc.product_managment.clients;
 
 import org.msvc.product_managment.model.Product;
+import org.msvc.product_managment.model.dtos.ProductRequest;
+import org.msvc.product_managment.model.dtos.ProductResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,4 +16,10 @@ public interface ProductFeignClient {
 
     @GetMapping("/{id}")
     Product findById(@PathVariable Long id);
+
+    @PostMapping
+    ProductResponse save(@RequestBody ProductRequest productRequest);
+
+    @PutMapping("/{id}")
+    ProductResponse update(@RequestBody ProductRequest productRequest, @PathVariable Long id);
 }

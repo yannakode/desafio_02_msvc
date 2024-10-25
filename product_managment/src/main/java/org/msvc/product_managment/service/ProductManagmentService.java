@@ -1,6 +1,6 @@
 package org.msvc.product_managment.service;
 
-import org.msvc.product_managment.model.ProductManagment;
+import org.msvc.product_managment.model.dtos.ProductManagmentRequest;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 
 import java.util.List;
@@ -11,4 +11,8 @@ public interface ProductManagmentService {
     List<ProductManagmentResponse> getAllProductsManagment();
 
     Optional<ProductManagmentResponse> getProductManagmentById(Long id);
+
+    ProductManagmentResponse createProductManagment(ProductManagmentRequest productManagmentRequest);
+
+    ProductManagmentResponse updateProductManagment(ProductManagmentRequest productManagmentRequest, Long id);
 }

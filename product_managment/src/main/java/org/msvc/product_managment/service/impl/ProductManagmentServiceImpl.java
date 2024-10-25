@@ -3,11 +3,14 @@ package org.msvc.product_managment.service.impl;
 import feign.FeignException;
 import org.modelmapper.ModelMapper;
 import org.msvc.product_managment.clients.ProductFeignClient;
+import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
 import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentRequest;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
+import org.msvc.product_managment.model.dtos.ProductRequest;
+import org.msvc.product_managment.model.dtos.ProductResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,7 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
         return productFeignClient.findAll()
                 .stream()
                 .map(p -> new ProductManagment(p, new Random().nextInt(10) + 1))
-                .map(productManagment -> modelMapper.map(productManagment, ProductManagmentResponse.class))
+                .map(p-> modelMapper.map(p, ProductManagmentResponse.class))
                 .collect(Collectors.toList());
     }
 
@@ -41,12 +44,43 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
     public Optional<ProductManagmentResponse> getProductManagmentById(Long id) {
         try {
             Product product = productFeignClient.findById(id);
-            ProductManagment productManagment = new ProductManagment(product, new Random().nextInt(10) + 1);
+            ProductManagment productManagment = new ProductManagment();
+            productManagment.setProduct(product);
+            if(productManagment.getQuantity() == null) productManagment.setQuantity(new Random().nextInt(10) + 1);
             return Optional.ofNullable(modelMapper.map(productManagment, ProductManagmentResponse.class));
         } catch (FeignException.NotFound e) {
             throw new ProductNotFoundException(id);
         }
     }
 
-    
+    @Override
+    public ProductManagmentResponse createProductManagment(ProductManagmentRequest productManagmentRequest) {
+        ProductRequest productRequest = modelMapper.map(productManagmentRequest.getProduct(), ProductRequest.class);
+        try{
+            productFeignClient.save(productRequest);
+
+            return modelMapper.map(productManagmentRequest, ProductManagmentResponse.class);
+        }catch (FeignException.BadRequest e){
+            throw new CustomBadRequestException(e);
+        }
+    }
+
+    @Override
+    public ProductManagmentResponse updateProductManagment(ProductManagmentRequest productManagmentRequest, Long productId) {
+        ProductRequest productRequest = modelMapper.map(productManagmentRequest.getProduct(), ProductRequest.class);
+        try{
+            ProductResponse productResponse = productFeignClient.update(productRequest, productId);
+            Product productUpated = modelMapper.map(productResponse, Product.class);
+
+            ProductManagmentRequest productManagmentRequestUpdated = new ProductManagmentRequest();
+            productManagmentRequestUpdated.setProduct(productUpated);
+            productManagmentRequestUpdated.setQuantity(productManagmentRequest.getQuantity());
+
+            return modelMapper.map(productManagmentRequestUpdated, ProductManagmentResponse.class);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

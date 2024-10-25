@@ -11,5 +11,5 @@ import org.msvc.product_managment.model.Product;
 public class ProductManagmentRequest {
     private Product product;
 
-    private int quantity;
+    private Integer quantity;
 }
