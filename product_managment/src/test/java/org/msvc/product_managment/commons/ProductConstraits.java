@@ -20,4 +20,11 @@ public class ProductConstraits {
             new Product("Product C", "Description C", 300.0),
             new Product("Product D", "Description D", 1000.0)
     );
+
+    public static final List<ProductResponse> PRODUCT_RESPONSE_LIST = Arrays.asList(
+            new ProductResponse("Product A", "Description A", 100.0),
+            new ProductResponse("Product B", "Description B", 200.0),
+            new ProductResponse("Product C", "Description C", 300.0),
+            new ProductResponse("Product D", "Description D", 1000.0)
+    );
 }

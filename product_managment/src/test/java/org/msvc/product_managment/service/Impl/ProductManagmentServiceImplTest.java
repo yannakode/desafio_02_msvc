@@ -1,5 +1,6 @@
 package org.msvc.product_managment.service.Impl;
 
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -108,5 +109,32 @@ public class ProductManagmentServiceImplTest {
     public void updateProductManagment_WithNullProduct_ThrowsException(){
         assertThatThrownBy(()-> productManagmentService.updateProductManagment(PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT, 1L))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    public void deleteProduct_WithValidData_ReturnsProductManagmentResponse(){
+        productManagmentService.deleteProduct(1L);
+
+        verify(productFeignClient, times(1)).delete(1L);
+    }
+
+    @Test
+    public void deleteProductManagment_WithNullProduct_ThrowsException(){
+        doThrow(FeignException.NotFound.class).when(productFeignClient).delete(1L);
+
+        assertThatThrownBy(()-> productManagmentService.deleteProduct(1L)).isInstanceOf(CustomBadRequestException.class);
+    }
+
+    @Test
+    public void filterProductsByPrice_ReturnsProductManagmentResponseList(){
+        when(productFeignClient.filterByPrice(100, 600)).thenReturn(PRODUCTS);
+        when(modelMapper.map(any(ProductManagment.class), eq(ProductManagmentResponse.class)))
+                .thenReturn(PRODUCT_MANAGMENT_RESPONSE);
+
+        List<ProductManagmentResponse> filteredProducts = productManagmentService.filterProductByPrice(100, 600);
+
+        assertNotNull(filteredProducts);
+        verify(productFeignClient, times(1)).filterByPrice(100, 600);
+        assertEquals(PRODUCTS.size(), filteredProducts.size());
     }
 }
