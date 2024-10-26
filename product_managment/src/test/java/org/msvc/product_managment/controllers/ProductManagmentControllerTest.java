@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
 import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-import static org.msvc.product_managment.commons.ProductConstraits.PRODUCT_REQUEST_NULL;
+import static org.mockito.Mockito.*;
 import static org.msvc.product_managment.commons.ProductManagmentConstraits.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,5 +96,31 @@ public class ProductManagmentControllerTest {
 
         assertThatThrownBy(()-> productManagmentController.updateProduct(PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT, 1L))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    public void deleteProduct_WithValidId_ReturnsNoContent() {
+        productManagmentController.deleteProduct(1L);
+
+        verify(productManagmentService).deleteProduct(1L);
+    }
+
+    @Test
+    public void deleteProduct_WithInvalidId_ReturnsProductNotFound() {
+        doThrow(CustomBadRequestException.class).when(productManagmentService).deleteProduct(1L);
+
+        assertThatThrownBy(()-> productManagmentController.deleteProduct(1L)).isInstanceOf(CustomBadRequestException.class);
+    }
+
+    @Test
+    public void filterProductByPrice_ReturnsProductManagmentResponseList() {
+        when(productManagmentService.filterProductByPrice(100, 300)).thenReturn(PRODUCT_MANAGMENT_RESPONSE_LIST);
+
+        ResponseEntity<List<ProductManagmentResponse>> filteredProducts = productManagmentController.filterByPrice(100, 300);
+
+        assertEquals(HttpStatus.OK, filteredProducts.getStatusCode());
+        assertEquals(PRODUCT_MANAGMENT_RESPONSE_LIST, filteredProducts.getBody());
+        assertTrue(!filteredProducts.getBody().isEmpty());
+        assertEquals(PRODUCT_MANAGMENT_RESPONSE_LIST.size(), filteredProducts.getBody().size());
     }
 }
