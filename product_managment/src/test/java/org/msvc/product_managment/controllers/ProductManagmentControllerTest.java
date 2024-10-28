@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
 import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
-import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;

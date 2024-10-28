@@ -18,10 +18,10 @@ public interface ProductFeignClient {
     Product findById(@PathVariable Long id);
 
     @PostMapping
-    ProductResponse save(@RequestBody ProductRequest productRequest);
+    Product save(@RequestBody ProductRequest productRequest);
 
     @PutMapping("/{id}")
-    ProductResponse update(@RequestBody ProductRequest productRequest, @PathVariable Long id);
+    Product update(@RequestBody ProductRequest productRequest, @PathVariable Long id);
 
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id);

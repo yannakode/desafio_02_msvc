@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.msvc.product_managment.clients.ProductFeignClient;
 import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
 import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
@@ -14,8 +13,7 @@ import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentRequest;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
-import org.msvc.product_managment.model.dtos.ProductRequest;
-import org.msvc.product_managment.model.dtos.ProductResponse;
+import org.msvc.product_managment.service.assembler.MapStruct;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,34 +32,35 @@ public class ProductManagmentServiceImplTest {
     private ProductManagmentServiceImpl productManagmentService;
 
     @Mock
-    private ModelMapper modelMapper;
+    MapStruct mapStruct;
 
     @Mock
     private ProductFeignClient productFeignClient;
 
     @Test
-    public void getAllProducts_ReturnsProductManagmentList(){
+    public void getAllProducts_ReturnsProductManagmentList() {
         when(productFeignClient.findAll()).thenReturn(PRODUCTS);
-        when(modelMapper.map(any(ProductManagment.class), eq(ProductManagmentResponse.class)))
-                .thenReturn(PRODUCT_MANAGMENT_RESPONSE);
+        when(mapStruct.toProductManagmentResponse(any(ProductManagment.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
 
         List<ProductManagmentResponse> productResponseList = productManagmentService.getAllProductsManagment();
 
         verify(productFeignClient, times(1)).findAll();
         assertNotNull(productResponseList);
-        verify(modelMapper, times(PRODUCTS.size())).map(any(ProductManagment.class), eq(ProductManagmentResponse.class));
+        assertEquals(PRODUCTS.size(), productResponseList.size());
+        verify(mapStruct, times(PRODUCTS.size())).toProductManagmentResponse(any(ProductManagment.class));
     }
 
     @Test
     public void getProductById_ByValidId_ReturnsProductManagmentResponse(){
         when(productFeignClient.findById(1L)).thenReturn(PRODUCT);
-        when(modelMapper.map(any(ProductManagment.class), eq(ProductManagmentResponse.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
+        when(mapStruct.toProductManagmentResponse(any(ProductManagment.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
 
         Optional<ProductManagmentResponse> productManagmentResponse = productManagmentService.getProductManagmentById(1L);
 
         assertNotNull(productManagmentResponse);
         verify(productFeignClient, times(1)).findById(1L);
         assertEquals(productManagmentResponse.get(), PRODUCT_MANAGMENT_RESPONSE);
+        verify(mapStruct, times(1)).toProductManagmentResponse(any(ProductManagment.class));
     }
 
     @Test
@@ -74,15 +73,17 @@ public class ProductManagmentServiceImplTest {
 
     @Test
     public void createProduct_WithValidData_ReturnsProductManagmentResponse(){
-        when(modelMapper.map(any(Product.class), eq(ProductRequest.class))).thenReturn(PRODUCT_REQUEST);
-        when(productFeignClient.save(PRODUCT_REQUEST)).thenReturn(PRODUCT_RESPONSE);
-        when(modelMapper.map(any(ProductManagmentRequest.class), eq(ProductManagmentResponse.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
+        when(mapStruct.toProductRequest(any(Product.class))).thenReturn(PRODUCT_REQUEST);
+        when(productFeignClient.save(PRODUCT_REQUEST)).thenReturn(PRODUCT);
+        when(mapStruct.toProductManagmentResponse(any(ProductManagment.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
 
         ProductManagmentResponse productManagmentResponse = productManagmentService.createProductManagment(PRODUCT_MANAGMENT_REQUEST);
 
         verify(productFeignClient, times(1)).save(PRODUCT_REQUEST);
         assertNotNull(productManagmentResponse);
         assertEquals(productManagmentResponse, PRODUCT_MANAGMENT_RESPONSE);
+        verify(mapStruct, times(1)).toProductRequest(any(Product.class));
+        verify(mapStruct, times(1)).toProductManagmentResponse(any(ProductManagment.class));
     }
 
     @Test
@@ -93,16 +94,17 @@ public class ProductManagmentServiceImplTest {
 
     @Test
     public void updateProduct_WithValidData_ReturnsProductManagmentResponse(){
-        when(modelMapper.map(any(Product.class), eq(ProductRequest.class))).thenReturn(PRODUCT_REQUEST);
-        when(productFeignClient.update(PRODUCT_REQUEST, 1L)).thenReturn(PRODUCT_RESPONSE);
-        when(modelMapper.map(any(ProductResponse.class), eq(Product.class))).thenReturn(PRODUCT);
-        when(modelMapper.map(any(ProductManagmentRequest.class), eq(ProductManagmentResponse.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
+        when(mapStruct.toProductRequest(any(Product.class))).thenReturn(PRODUCT_REQUEST);
+        when(productFeignClient.update(PRODUCT_REQUEST, 1L)).thenReturn(PRODUCT);
+        when(mapStruct.toProductManagmentResponse(any(ProductManagmentRequest.class))).thenReturn(PRODUCT_MANAGMENT_RESPONSE);
 
         ProductManagmentResponse productManagmentResponse = productManagmentService.updateProductManagment(PRODUCT_MANAGMENT_REQUEST, 1L);
         ProductManagment productManagmentUpdated = new ProductManagment(PRODUCT, 1);
 
         verify(productFeignClient, times(1)).update(PRODUCT_REQUEST, 1L);
         assertNotNull(productManagmentUpdated);
+        verify(mapStruct, times(1)).toProductRequest(any(Product.class));
+        verify(mapStruct, times(1)).toProductManagmentResponse(any(ProductManagmentRequest.class));
     }
 
     @Test
@@ -122,13 +124,14 @@ public class ProductManagmentServiceImplTest {
     public void deleteProductManagment_WithNullProduct_ThrowsException(){
         doThrow(FeignException.NotFound.class).when(productFeignClient).delete(1L);
 
-        assertThatThrownBy(()-> productManagmentService.deleteProduct(1L)).isInstanceOf(CustomBadRequestException.class);
+        assertThatThrownBy(()-> productManagmentService.deleteProduct(1L))
+                .isInstanceOf(CustomBadRequestException.class);
     }
 
     @Test
     public void filterProductsByPrice_ReturnsProductManagmentResponseList(){
         when(productFeignClient.filterByPrice(100, 600)).thenReturn(PRODUCTS);
-        when(modelMapper.map(any(ProductManagment.class), eq(ProductManagmentResponse.class)))
+        when(mapStruct.toProductManagmentResponse(any(ProductManagment.class)))
                 .thenReturn(PRODUCT_MANAGMENT_RESPONSE);
 
         List<ProductManagmentResponse> filteredProducts = productManagmentService.filterProductByPrice(100, 600);
@@ -136,5 +139,6 @@ public class ProductManagmentServiceImplTest {
         assertNotNull(filteredProducts);
         verify(productFeignClient, times(1)).filterByPrice(100, 600);
         assertEquals(PRODUCTS.size(), filteredProducts.size());
+        verify(mapStruct, times(PRODUCTS.size())).toProductManagmentResponse(any(ProductManagment.class));
     }
 }

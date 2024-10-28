@@ -35,8 +35,6 @@ public class ProductManagmentConstraits {
 
     public static final ProductManagmentRequest PRODUCT_MANAGMENT_REQUEST = new ProductManagmentRequest(PRODUCT, 5);
     public static final ProductManagmentRequest PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT = new ProductManagmentRequest(null, 5);
-    public static final ProductManagmentRequest PRODUCT_MANAGMENT_REQUEST_WITH_NULL_QUANTITY = new ProductManagmentRequest(PRODUCT, null);
-    public static final ProductManagmentRequest PRODUCT_MANAGMENT_REQUEST_WITH_NEGATIVE_QUANTITY = new ProductManagmentRequest(PRODUCT, -5);
 
     public static final List<ProductManagmentRequest> PRODUCT_MANAGMENT_REQUEST_LIST = Arrays.asList(
             new ProductManagmentRequest(new Product("Product A", "Description A", 100.0), 10),
