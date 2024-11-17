@@ -1,4 +1,4 @@
-package org.msvc.product_managment.controllers.exceptions;
+package org.msvc.product_managment.service.exceptions;
 
 public class CustomBadRequestException  extends RuntimeException{
     public CustomBadRequestException(Throwable cause) {

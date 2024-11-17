@@ -2,8 +2,8 @@ package org.msvc.product_managment.service.Impl;
 
 import feign.FeignException;
 import org.msvc.product_managment.clients.ProductFeignClient;
-import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
-import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.service.exceptions.CustomBadRequestException;
+import org.msvc.product_managment.service.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentRequest;

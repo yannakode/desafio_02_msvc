@@ -42,8 +42,9 @@ public class ProductManagmentController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productManagmentService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search")

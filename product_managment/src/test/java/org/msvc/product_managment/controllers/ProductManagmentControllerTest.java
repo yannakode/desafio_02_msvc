@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.msvc.product_managment.controllers.exceptions.CustomBadRequestException;
-import org.msvc.product_managment.controllers.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.service.exceptions.CustomBadRequestException;
+import org.msvc.product_managment.service.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;
@@ -69,7 +69,7 @@ public class ProductManagmentControllerTest {
     }
 
     @Test
-    public void createProduct_WithNullData_ReturnsProductNotFound() {
+    public void createProduct_WithNullProduct_ReturnsProductNotFound() {
         when(productManagmentService.createProductManagment(PRODUCT_MANAGMENT_REQUEST_WITH_NULL_PRODUCT))
                 .thenThrow(ProductNotFoundException.class);
 

@@ -12,8 +12,6 @@ public class ProductConstraits {
     public static final ProductRequest PRODUCT_REQUEST = new ProductRequest("Laptop", "Gaming laptop", 1200.0);
     public static final ProductResponse PRODUCT_RESPONSE = new ProductResponse("Laptop", "Gaming laptop", 1200.0);
 
-    public static final ProductRequest PRODUCT_REQUEST_NULL = new ProductRequest(null, null, 0.0);
-
     public static final List<Product> PRODUCTS = Arrays.asList(
             new Product("Product A", "Description A", 100.0),
             new Product("Product B", "Description B", 200.0),
@@ -21,10 +19,4 @@ public class ProductConstraits {
             new Product("Product D", "Description D", 1000.0)
     );
 
-    public static final List<ProductResponse> PRODUCT_RESPONSE_LIST = Arrays.asList(
-            new ProductResponse("Product A", "Description A", 100.0),
-            new ProductResponse("Product B", "Description B", 200.0),
-            new ProductResponse("Product C", "Description C", 300.0),
-            new ProductResponse("Product D", "Description D", 1000.0)
-    );
 }
