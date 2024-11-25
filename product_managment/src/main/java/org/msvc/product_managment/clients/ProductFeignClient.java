@@ -1,5 +1,6 @@
 package org.msvc.product_managment.clients;
 
+import jakarta.validation.Valid;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.dtos.ProductRequest;
 import org.msvc.product_managment.model.dtos.ProductResponse;
@@ -18,10 +19,10 @@ public interface ProductFeignClient {
     Product findById(@PathVariable Long id);
 
     @PostMapping
-    Product save(@RequestBody ProductRequest productRequest);
+    Product save(@Valid @RequestBody ProductRequest productRequest);
 
     @PutMapping("/{id}")
-    Product update(@RequestBody ProductRequest productRequest, @PathVariable Long id);
+    Product update(@RequestBody @Valid ProductRequest productRequest, @PathVariable Long id);
 
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id);

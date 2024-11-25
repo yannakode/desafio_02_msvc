@@ -1,5 +1,6 @@
 package org.msvc.product_managment.model.dtos;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
-
     private String name;
 
     private String description;

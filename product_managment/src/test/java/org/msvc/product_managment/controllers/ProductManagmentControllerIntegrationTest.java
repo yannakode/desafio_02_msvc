@@ -2,7 +2,7 @@ package org.msvc.product_managment.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.msvc.product_managment.service.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

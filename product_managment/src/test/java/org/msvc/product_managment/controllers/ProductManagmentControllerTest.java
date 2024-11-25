@@ -5,8 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.msvc.product_managment.service.exceptions.CustomBadRequestException;
-import org.msvc.product_managment.service.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.exceptions.CustomInvalidDataException;
+import org.msvc.product_managment.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.dtos.ProductManagmentResponse;
 import org.msvc.product_managment.service.ProductManagmentService;
 import org.springframework.http.HttpStatus;
@@ -106,9 +106,9 @@ public class ProductManagmentControllerTest {
 
     @Test
     public void deleteProduct_WithInvalidId_ReturnsProductNotFound() {
-        doThrow(CustomBadRequestException.class).when(productManagmentService).deleteProduct(1L);
+        doThrow(CustomInvalidDataException.class).when(productManagmentService).deleteProduct(1L);
 
-        assertThatThrownBy(()-> productManagmentController.deleteProduct(1L)).isInstanceOf(CustomBadRequestException.class);
+        assertThatThrownBy(()-> productManagmentController.deleteProduct(1L)).isInstanceOf(CustomInvalidDataException.class);
     }
 
     @Test

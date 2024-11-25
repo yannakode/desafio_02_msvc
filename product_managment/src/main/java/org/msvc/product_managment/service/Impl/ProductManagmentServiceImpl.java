@@ -2,8 +2,8 @@ package org.msvc.product_managment.service.Impl;
 
 import feign.FeignException;
 import org.msvc.product_managment.clients.ProductFeignClient;
-import org.msvc.product_managment.service.exceptions.CustomBadRequestException;
-import org.msvc.product_managment.service.exceptions.ProductNotFoundException;
+import org.msvc.product_managment.exceptions.CustomInvalidDataException;
+import org.msvc.product_managment.exceptions.ProductNotFoundException;
 import org.msvc.product_managment.model.Product;
 import org.msvc.product_managment.model.ProductManagment;
 import org.msvc.product_managment.model.dtos.ProductManagmentRequest;
@@ -49,14 +49,14 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
             productManagment.setProduct(product);
             if(productManagment.getQuantity() == null) productManagment.setQuantity(new Random().nextInt(10) + 1);
             return Optional.ofNullable(mapStruct.toProductManagmentResponse(productManagment));
-        } catch (FeignException.NotFound e) {
+        } catch (FeignException.NotFound ex) {
             throw new ProductNotFoundException(id);
         }
     }
 
     @Override
     public ProductManagmentResponse createProductManagment(ProductManagmentRequest productManagmentRequest) {
-        if(productManagmentRequest.product() == null) throw new ProductNotFoundException("Product cannot be null");
+        if(productManagmentRequest.product() == null) throw new CustomInvalidDataException("Product cannot be null");
 
         ProductRequest productRequest = mapStruct.toProductRequest(productManagmentRequest.product());
         try{
@@ -65,15 +65,13 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
             ProductManagment productManagment = new ProductManagment(productResponse, productManagmentRequest.quantity());
 
             return mapStruct.toProductManagmentResponse(productManagment);
-        }catch (FeignException.BadRequest e){
-            throw new CustomBadRequestException(e);
+        }catch (FeignException.UnprocessableEntity ex){
+            throw new CustomInvalidDataException("Invalid data for product");
         }
     }
 
     @Override
     public ProductManagmentResponse updateProductManagment(ProductManagmentRequest productManagmentRequest, Long productId) {
-        if(productManagmentRequest.product() == null) throw new ProductNotFoundException("Product cannot be null");
-
         ProductRequest productRequest = mapStruct.toProductRequest(productManagmentRequest.product());
         try{
             Product productUpdated = productFeignClient.update(productRequest, productId);
@@ -81,8 +79,8 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
             ProductManagmentRequest productManagmentRequestUpdated = new ProductManagmentRequest(productUpdated, productManagmentRequest.quantity());
 
             return mapStruct.toProductManagmentResponse(productManagmentRequestUpdated);
-        } catch (FeignException.BadRequest e) {
-            throw new CustomBadRequestException(e);
+        }catch (FeignException.NotFound ex){
+            throw new ProductNotFoundException(productId);
         }
     }
 
@@ -91,7 +89,7 @@ public class ProductManagmentServiceImpl implements ProductManagmentService {
         try{
             productFeignClient.delete(id);
         }catch (FeignException.NotFound e){
-            throw new CustomBadRequestException("Product not found with id " + id);
+            throw new ProductNotFoundException(id);
         }
     }
 
